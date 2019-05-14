@@ -18,7 +18,7 @@ const url = 'mongodb://localhost:27017';
 const dbName = 'hello-server';
  
 // Use connect method to connect to the server
-MongoClient.connect(url, function(err, client) {
+MongoClient.connect(url, {useNewUrlParser:true}, function(err, client) {
     if (err) {
         console.log(err);
         process.exit(1);
@@ -34,7 +34,7 @@ MongoClient.connect(url, function(err, client) {
     userRoute.load(app);
     productRoute.load(app);
     app.use(function (err, req, res, next) {
-        console.log(err);
+        console.log(JSON.stringify(err, null, 2));
         if (Array.isArray(err.errors)) {
             const messagese = err.errors.map(function(item) {
                 return item.message;

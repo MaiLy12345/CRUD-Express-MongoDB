@@ -10,7 +10,13 @@ const createProduct = async (req, res, next) => {
             return next(new Error('USER_NOT_FOUND'));
         }
         const productCollection = req.db.collection('products');
-        const data = await productCollection.insertOne(body);
+        // khi body nguoi dung truyen nhieu status k can thiet: name, price, isAvailable .... status1,23
+        const models = ['name', 'userId', 'price', 'color','isAvailable','payload'];// phai tao array de luu status. nhuoc diem cua monggodb khi truyen nhieu status k can thiet
+        const saveToProduct = {};
+        for (const key of models) {
+            saveToProduct[key] = body[key];
+        }
+        const data = await productCollection.insertOne(saveToProduct);
         return res.status(200).json({
             message: 'Create new product successfully',
             data
@@ -79,6 +85,7 @@ const updateProduct = async (req, res, next) => {
     try {
         const productId = req.params.id;
         const newValues = {$set : req.body};
+        // name, price, 
         const result = await req.db.collection('products').findOneAndUpdate({productId}, newValues);
         if (!result.value) {
             return next(new Error('PRODUCT_NOT_FOUND'));
